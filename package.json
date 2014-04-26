@@ -1,0 +1,32 @@
+{
+  "name": "midiguchi",
+  "version": "0.0.0",
+  "description": "MIDI I/O with Bacon.js",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "midi": "^0.9.0"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/midiguchi/midiguchi.git"
+  },
+  "keywords": [
+    "MIDI",
+    "Bacon",
+    "FRP"
+  ],
+  "author": "Thai Pangsakulyanont <org.yi.dttvb@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/midiguchi/midiguchi/issues"
+  },
+  "homepage": "https://github.com/midiguchi/midiguchi"
+}
