@@ -267,6 +267,12 @@ Usually, you would modify the notes stream, and merge it back with the others.
 See: Processing Note Events Separately
 
 
+### midi.processNote(stream, callback(notes))
+
+Just like `midi.splitNote` but does not pass `others` to the callback
+and merges the `others` back automatically.
+
+
 ### M = require('midiguchi/midi_util')
 
 A utility for dealing with MIDI events.

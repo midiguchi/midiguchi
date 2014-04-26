@@ -8,5 +8,6 @@ exports.output = io.output
 exports.transpose = require('./transpose')
 exports.mapNote = require('./map_note')
 exports.splitNote = require('./split_note')
+exports.processNote = require('./process_note')
 
 

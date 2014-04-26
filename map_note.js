@@ -1,5 +1,6 @@
 
 var M = require('./midi_util')
+var processNote = require('./process_note')
 var Bacon = require('baconjs')
 var util = require('util')
 
@@ -17,12 +18,11 @@ module.exports = function transpose(input, callback, properties) {
   // A table of mapping from input note to output notes.
   var table = { }
 
-  return Bacon.zipWith([input].concat(properties), function(event) {
-    if (M.isNoteOn(event) || M.isNoteOff(event)) {
-      return handle.apply(null, arguments)
-    }
-    return [event]
-  }).flatMap(Bacon.fromArray)
+  // Process only notes...
+  return processNote(input, function(notes, others) {
+    return  Bacon.zipWith([notes].concat(properties), handle)
+                 .flatMap(Bacon.fromArray)
+  })
 
   function handle(event) {
 

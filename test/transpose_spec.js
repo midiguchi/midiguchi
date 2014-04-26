@@ -27,7 +27,7 @@ function config(callback) {
   }
 }
 
-var transpose = require('../transpose')
+var transpose = require('../').transpose
 
 describe('transpose', function() {
 
