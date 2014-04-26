@@ -9,6 +9,17 @@ It's inspired by [Midipipe](http://www.subtlesoft.square7.net/)
 but more hacker-friendly.
 
 
+What you can do with it:
+------------------------
+
+* Log MIDI messages from your MIDI input device.
+* Route MIDI messages from an input port to output port.
+* Transpose notes from your keyboard before it hits your DAW.
+* Combine multiple MIDI inputs into one output.
+* Perform arbitrary MIDI message manipulations, or even generate them.
+
+
+
 Usage and Examples
 ------------------
 
