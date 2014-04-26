@@ -26,7 +26,7 @@ module.exports = function transpose(input, callback, properties) {
 
   function handle(event) {
 
-    var on = !(M.isNoteOff(event) && M.velocity(event) > 0)
+    var on = !(M.isNoteOff(event) || M.velocity(event) == 0)
     var key = M.channel(event) + '-' + M.key(event)
 
     var result
