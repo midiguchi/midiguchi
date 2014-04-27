@@ -1,5 +1,5 @@
 
-source = File.readlines('README.src.md').map(&:strip)
+source = File.readlines('README.src.md').map(&:chomp)
 
 toc = []
 links = {}

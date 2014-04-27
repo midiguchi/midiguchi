@@ -122,7 +122,7 @@ This will log the MIDI messages sent from your keyboard:
 
 ### <a name="usage-output"></a>MIDI Output Bus
 
-A MIDI Output Bus is a Bacon.js Bus that you can plug EventStreams
+A MIDI Output Bus is a Bacon.js Bus that you can plug EventStreams 
 
 ```coffeescript
 output = 口.output.open('USB MIDI Interface')
@@ -195,14 +195,14 @@ You can use Midiguchi to remap them to any key you want.
 
 ```coffee
 mapping =
-38: 36
-40: 38
-41: 40
-43: 50
-45: 48
-47: 47
-48: 45
-50: 43
+  38: 36
+  40: 38
+  41: 40
+  43: 50
+  45: 48
+  47: 47
+  48: 45
+  50: 43
 
 output.plug(口.mapNote(input, mapping))
 ```
@@ -215,9 +215,9 @@ This will map every note to random notes.
 
 ```coffee
 mapping = (note) ->
-# note :: { channel, key, velocity }
-note.key = 36 + Math.floor(Math.random() * 49)
-return note
+  # note :: { channel, key, velocity }
+  note.key = 36 + Math.floor(Math.random() * 49)
+  return note
 ```
 
 
@@ -225,8 +225,8 @@ You can also return an array of notes, and they will be played as a chord.
 
 ```coffee
 mapping = ({ channel, key, velocity }) ->
-note = (add) -> { channel, key: key + add, velocity }
-return [note(0), note(4), note(7)]
+  note = (add) -> { channel, key: key + add, velocity }
+  return [note(0), note(4), note(7)]
 ```
 
 API: [口.mapNote(stream, mapper(event, values...), properties)](#api-mapNote-function)
@@ -246,8 +246,8 @@ This is done by transposing and adding a delay, and merge with original notes st
 
 ```coffee
 result = 口.splitNote(input, (notes, others) ->
-notes2 = 口.transpose(notes.delay(40), 12)
-Bacon.mergeAll(notes, notes2, others)
+  notes2 = 口.transpose(notes.delay(40), 12)
+  Bacon.mergeAll(notes, notes2, others)
 )
 output.plug(result)
 ```
@@ -259,17 +259,17 @@ A delay effect. Whatever you play, it will play with lower velocity 400ms later,
 
 ```coffee
 changeVelocity = (multiplier) -> (event) ->
-event.velocity *= multiplier
-return event
+  event.velocity *= multiplier
+  return event
 
 delay = (stream) ->
-口.mapNote(stream.delay(400), changeVelocity(0.7))
+  口.mapNote(stream.delay(400), changeVelocity(0.7))
 
 result = 口.splitNote(input, (notes, others) ->
-delay1 = delay(notes)
-delay2 = delay(delay1)
-delay3 = delay(delay2)
-Bacon.mergeAll(notes, delay1, delay2, delay3, others)
+  delay1 = delay(notes)
+  delay2 = delay(delay1)
+  delay3 = delay(delay2)
+  Bacon.mergeAll(notes, delay1, delay2, delay3, others)
 )
 
 output.plug(result)
@@ -371,8 +371,8 @@ These functions receives a note event, and determines its...
 This function constructs a MIDI note event from the arguments:
 
 * M.create.note(on, channel, key, velocity)
-* If `on` is true, you get a Note On event.
-* If `on` is false, you get a Note Off event.
+    * If `on` is true, you get a Note On event.
+    * If `on` is false, you get a Note Off event.
 
 
 
