@@ -21,35 +21,14 @@ What you can do with it:
 
 Table of Contents
 -----------------
-* [Basic Concepts](basic)
-    * [Functional Reactive Programming and Bacon.js](basic-frp)
-    * [Input Stream and Output Bus](basic-io)
-* [Usage and Examples](usage)
-    * [List Input and Output Ports](usage-list)
-    * [MIDI Input Stream](usage-input)
-    * [MIDI Output Bus](usage-output)
-    * [MIDI Routing](usage-routing)
-    * [Transposition](usage-transpose)
-    * [Virtual Ports](usage-virtual)
-    * [Remapping Notes](usage-remap)
-    * [Processing Note Events Separately from Other Events](usage-splitNote)
-* [API](api)
-    * [口.input and 口.output](api-input-output)
-    * [口.transpose(stream, transposition)](api-transpose)
-    * [口.mapNote(stream, mapping)](api-mapNote-object)
-    * [口.mapNote(stream, mapper(event, values...), properties)](api-mapNote-function)
-    * [口.splitNote(stream, callback(notes, others))](api-splitNote)
-    * [口.processNote(stream, callback(notes))](api-processNote)
-    * [M = require('midiguchi/midi_util')](api-util)
+HERETOC
 
 
 
+## Basic Concepts {#basic}
 
 
-## <a name="basic"></a>Basic Concepts
-
-
-### <a name="basic-frp"></a>Functional Reactive Programming and Bacon.js
+### Functional Reactive Programming and Bacon.js {#basic-frp}
 
 If you want to know more about Functional Reactive Programming,
 check out [Bacon.js][].
@@ -67,7 +46,7 @@ This allows you to filter, manipulate, and transpose notes easily.
 
 
 
-### <a name="basic-io"></a>Input Stream and Output Bus
+### Input Stream and Output Bus {#basic-io}
 
 Midiguchi provides two basic streams for raw MIDI events.
 
@@ -76,16 +55,16 @@ Midiguchi provides two basic streams for raw MIDI events.
 
 
 
-## <a name="usage"></a>Usage and Examples
+## Usage and Examples {#usage}
 
 ```coffeescript
 口 = require('midiguchi')
 ```
 
 
-### <a name="usage-list"></a>List Input and Output Ports
+### List Input and Output Ports {#usage-list}
 
-API: [口.input and 口.output](#api-input-output)
+API: [[#api-input-output]]
 
 ```coffeescript
 console.log(口.input.ports)
@@ -93,7 +72,7 @@ console.log(口.output.ports)
 ```
 
 
-### <a name="usage-input"></a>MIDI Input Stream
+### MIDI Input Stream {#usage-input}
 
 A MIDI Input Stream is a Bacon.js EventStream from a MIDI port.
 It will emit MIDI events.
@@ -120,9 +99,9 @@ This will log the MIDI messages sent from your keyboard:
 ```
 
 
-### <a name="usage-output"></a>MIDI Output Bus
+### MIDI Output Bus {#usage-output}
 
-A MIDI Output Bus is a Bacon.js Bus that you can plug EventStreams
+A MIDI Output Bus is a Bacon.js Bus that you can plug EventStreams 
 
 ```coffeescript
 output = 口.output.open('USB MIDI Interface')
@@ -131,7 +110,7 @@ output = 口.output.virtual('Virtual Input Name')
 ```
 
 
-### <a name="usage-routing"></a>MIDI Routing
+### MIDI Routing {#usage-routing}
 
 This code will route MIDI events from my nanoKEY2 to my Chromatone.
 
@@ -144,7 +123,7 @@ output.plug(input)
 ![Routing](doc_images/03_route.png)
 
 
-### <a name="usage-transpose"></a>Transposition
+### Transposition {#usage-transpose}
 
 My nanoKEY2 cannot transpose notes.
 But with Midiguchi this is very easy.
@@ -159,7 +138,7 @@ output = 口.output.open('USB MIDI Interface')
 output.plug(transposed)
 ```
 
-[口.transpose(stream, transposition)](#api-transpose) is an example of a function.
+[[#api-transpose]] is an example of a function.
 It takes an EventStream
 and returns another EventStream with transposed Note On/Off events.
 
@@ -169,7 +148,7 @@ You can plug the transposed stream into the output, as before.
 
 
 
-### <a name="usage-virtual"></a>Virtual Ports
+### Virtual Ports {#usage-virtual}
 
 According to [node-midi][]'s documentation,
 you can open a virtual port to send MIDI messages into other applications.
@@ -188,26 +167,26 @@ output = 口.output.virtual('Midiguchi')
 output.plug(transposed)
 ```
 
-### <a name="usage-remap"></a>Remapping Notes
+### Remapping Notes {#usage-remap}
 
 Some keyboards with buttons doesn't support note remapping.
 You can use Midiguchi to remap them to any key you want.
 
 ```coffee
 mapping =
-38: 36
-40: 38
-41: 40
-43: 50
-45: 48
-47: 47
-48: 45
-50: 43
+  38: 36
+  40: 38
+  41: 40
+  43: 50
+  45: 48
+  47: 47
+  48: 45
+  50: 43
 
 output.plug(口.mapNote(input, mapping))
 ```
 
-API: [口.mapNote(stream, mapping)](#api-mapNote-object)
+API: [[#api-mapNote-object]]
 
 
 You can also use a function to remap notes.
@@ -215,9 +194,9 @@ This will map every note to random notes.
 
 ```coffee
 mapping = (note) ->
-# note :: { channel, key, velocity }
-note.key = 36 + Math.floor(Math.random() * 49)
-return note
+  # note :: { channel, key, velocity }
+  note.key = 36 + Math.floor(Math.random() * 49)
+  return note
 ```
 
 
@@ -225,14 +204,14 @@ You can also return an array of notes, and they will be played as a chord.
 
 ```coffee
 mapping = ({ channel, key, velocity }) ->
-note = (add) -> { channel, key: key + add, velocity }
-return [note(0), note(4), note(7)]
+  note = (add) -> { channel, key: key + add, velocity }
+  return [note(0), note(4), note(7)]
 ```
 
-API: [口.mapNote(stream, mapper(event, values...), properties)](#api-mapNote-function)
+API: [[#api-mapNote-function]]
 
 
-### <a name="usage-splitNote"></a>Processing Note Events Separately from Other Events
+### Processing Note Events Separately from Other Events {#usage-splitNote}
 
 Midiguchi has a `口.splitNote` function that will split one stream into two:
 one with note events, and the other without.
@@ -246,8 +225,8 @@ This is done by transposing and adding a delay, and merge with original notes st
 
 ```coffee
 result = 口.splitNote(input, (notes, others) ->
-notes2 = 口.transpose(notes.delay(40), 12)
-Bacon.mergeAll(notes, notes2, others)
+  notes2 = 口.transpose(notes.delay(40), 12)
+  Bacon.mergeAll(notes, notes2, others)
 )
 output.plug(result)
 ```
@@ -259,31 +238,31 @@ A delay effect. Whatever you play, it will play with lower velocity 400ms later,
 
 ```coffee
 changeVelocity = (multiplier) -> (event) ->
-event.velocity *= multiplier
-return event
+  event.velocity *= multiplier
+  return event
 
 delay = (stream) ->
-口.mapNote(stream.delay(400), changeVelocity(0.7))
+  口.mapNote(stream.delay(400), changeVelocity(0.7))
 
 result = 口.splitNote(input, (notes, others) ->
-delay1 = delay(notes)
-delay2 = delay(delay1)
-delay3 = delay(delay2)
-Bacon.mergeAll(notes, delay1, delay2, delay3, others)
+  delay1 = delay(notes)
+  delay2 = delay(delay1)
+  delay3 = delay(delay2)
+  Bacon.mergeAll(notes, delay1, delay2, delay3, others)
 )
 
 output.plug(result)
 ```
 
-API: [口.splitNote(stream, callback(notes, others))](#api-splitNote)
+API: [[#api-splitNote]]
 
 
 
 
 
-## <a name="api"></a>API
+## API {#api}
 
-### <a name="api-input-output"></a>口.input and 口.output
+### 口.input and 口.output {#api-input-output}
 
 ```javascript
 口.input.ports
@@ -297,29 +276,29 @@ API: [口.splitNote(stream, callback(notes, others))](#api-splitNote)
 
 For usage, see:
 
-* [List Input and Output Ports](#usage-list)
-* [MIDI Input Stream](#usage-input)
-* [MIDI Output Bus](#usage-output)
-* [MIDI Routing](#usage-routing)
-* [Virtual Ports](#usage-virtual)
+* [[#usage-list]]
+* [[#usage-input]]
+* [[#usage-output]]
+* [[#usage-routing]]
+* [[#usage-virtual]]
 
 
-### <a name="api-transpose"></a>口.transpose(stream, transposition)
+### 口.transpose(stream, transposition) {#api-transpose}
 
 Returns a transposed version of the stream.
 `transposition` can be a number or a Bacon.js Property.
 
-For usage, see [Transposition](#usage-transpose)
+For usage, see [[#usage-transpose]]
 
 
-### <a name="api-mapNote-object"></a>口.mapNote(stream, mapping)
+### 口.mapNote(stream, mapping) {#api-mapNote-object}
 
 Returns a stream with notes remapped.
 
-For usage, see [Remapping Notes](#usage-remap)
+For usage, see [[#usage-remap]]
 
 
-### <a name="api-mapNote-function"></a>口.mapNote(stream, mapper(event, values...), properties)
+### 口.mapNote(stream, mapper(event, values...), properties) {#api-mapNote-function}
 
 Returns a stream with notes remapped. Instead of using a fixed mapping,
 you can map them using an arbitrary function.
@@ -327,10 +306,10 @@ you can map them using an arbitrary function.
 You can also send Bacon.js properties into `properties` parameter,
 and the current value will be sampled into `mapper`'s `values` parameter.
 
-For usage, see [Remapping Notes](#usage-remap)
+For usage, see [[#usage-remap]]
 
 
-### <a name="api-splitNote"></a>口.splitNote(stream, callback(notes, others))
+### 口.splitNote(stream, callback(notes, others)) {#api-splitNote}
 
 Separates the stream into two streams:
 
@@ -341,16 +320,16 @@ Then calls the callback function, and returns whatever that function returns.
 
 Usually, you would modify the notes stream, and merge it back with the others.
 
-For usage, see [Processing Note Events Separately from Other Events](#usage-splitNote).
+For usage, see [[#usage-splitNote]].
 
 
-### <a name="api-processNote"></a>口.processNote(stream, callback(notes))
+### 口.processNote(stream, callback(notes)) {#api-processNote}
 
 Just like `口.splitNote` but does not pass `others` to the callback
 and merges the `others` back automatically.
 
 
-### <a name="api-util"></a>M = require('midiguchi/midi_util')
+### M = require('midiguchi/midi_util') {#api-util}
 
 A utility for dealing with MIDI events.
 
@@ -371,8 +350,8 @@ These functions receives a note event, and determines its...
 This function constructs a MIDI note event from the arguments:
 
 * M.create.note(on, channel, key, velocity)
-* If `on` is true, you get a Note On event.
-* If `on` is false, you get a Note Off event.
+    * If `on` is true, you get a Note On event.
+    * If `on` is false, you get a Note Off event.
 
 
 
@@ -383,5 +362,6 @@ This function constructs a MIDI note event from the arguments:
 [node-midi]: https://github.com/justinlatimer/node-midi
 [Bacon.js]: https://github.com/baconjs/bacon.js
 [MainStage]: http://www.apple.com/mainstage/
+
 
 
