@@ -132,7 +132,7 @@ But with Midiguchi this is very easy.
 口 = require('midiguchi')
 
 input = 口.input.open('nanoKEY2 KEYBOARD')
-transposed = 口.transpose(input, 3)
+transposed = 口.transpose(3)(input)
 
 output = 口.output.open('USB MIDI Interface')
 output.plug(transposed)
@@ -161,7 +161,7 @@ and into MainStage's input.
 口 = require('midiguchi')
 
 input = 口.input.open('nanoKEY2 KEYBOARD')
-transposed = 口.transpose(input, 3)
+transposed = 口.transpose(3)(input)
 
 output = 口.output.virtual('Midiguchi')
 output.plug(transposed)
@@ -183,7 +183,7 @@ mapping =
   48: 45
   50: 43
 
-output.plug(口.mapNote(input, mapping))
+output.plug(口.mapNote(mapping)(input))
 ```
 
 API: [[#api-mapNote-object]]
@@ -193,8 +193,8 @@ You can also use a function to remap notes.
 This will map every note to random notes.
 
 ```coffee
-mapping = (note) ->
-  # note :: { channel, key, velocity }
+mapping = (stream) -> stream.map (note) ->
+  # note :: { id, channel, key, velocity }
   note.key = 36 + Math.floor(Math.random() * 49)
   return note
 ```
@@ -203,9 +203,9 @@ mapping = (note) ->
 You can also return an array of notes, and they will be played as a chord.
 
 ```coffee
-mapping = ({ channel, key, velocity }) ->
-  note = (add) -> { channel, key: key + add, velocity }
-  return [note(0), note(4), note(7)]
+mapping = (stream) -> stream.flatMap ({ id, channel, key, velocity }) ->
+  note = (add) -> { id, channel, key: key + add, velocity }
+  return Bacon.fromArray([note(0), note(4), note(7)])
 ```
 
 API: [[#api-mapNote-function]]
@@ -224,10 +224,9 @@ it will also play the same note in the next offset.
 This is done by transposing and adding a delay, and merge with original notes stream:
 
 ```coffee
-result = 口.splitNote(input, (notes, others) ->
-  notes2 = 口.transpose(notes.delay(40), 12)
-  Bacon.mergeAll(notes, notes2, others)
-)
+result = 口.splitNote((notes, others) ->
+  notes2 = 口.transpose(12)(notes.delay(40))
+  Bacon.mergeAll(notes, notes2, others))(input)
 output.plug(result)
 ```
 
@@ -237,19 +236,18 @@ output.plug(result)
 A delay effect. Whatever you play, it will play with lower velocity 400ms later, for 3 times:
 
 ```coffee
-changeVelocity = (multiplier) -> (event) ->
+changeVelocity = (multiplier) -> (stream) -> stream.map (event) ->
   event.velocity *= multiplier
   return event
 
 delay = (stream) ->
-  口.mapNote(stream.delay(400), changeVelocity(0.7))
+  口.mapNote(changeVelocity(0.7))(stream.delay(400))
 
-result = 口.splitNote(input, (notes, others) ->
+result = 口.splitNote((notes, others) ->
   delay1 = delay(notes)
   delay2 = delay(delay1)
   delay3 = delay(delay2)
-  Bacon.mergeAll(notes, delay1, delay2, delay3, others)
-)
+  Bacon.mergeAll(notes, delay1, delay2, delay3, others))(input)
 
 output.plug(result)
 ```
@@ -283,7 +281,7 @@ For usage, see:
 * [[#usage-virtual]]
 
 
-### 口.transpose(stream, transposition) {#api-transpose}
+### 口.transpose(transposition)(stream) {#api-transpose}
 
 Returns a transposed version of the stream.
 `transposition` can be a number or a Bacon.js Property.
@@ -291,14 +289,14 @@ Returns a transposed version of the stream.
 For usage, see [[#usage-transpose]]
 
 
-### 口.mapNote(stream, mapping) {#api-mapNote-object}
+### 口.mapNote(mapping)(stream) {#api-mapNote-object}
 
 Returns a stream with notes remapped.
 
 For usage, see [[#usage-remap]]
 
 
-### 口.mapNote(stream, mapper(event, values...), properties) {#api-mapNote-function}
+### 口.mapNote(transformer(eventStream))(stream) {#api-mapNote-function}
 
 Returns a stream with notes remapped. Instead of using a fixed mapping,
 you can map them using an arbitrary function.
@@ -309,7 +307,7 @@ and the current value will be sampled into `mapper`'s `values` parameter.
 For usage, see [[#usage-remap]]
 
 
-### 口.splitNote(stream, callback(notes, others)) {#api-splitNote}
+### 口.splitNote(callback(notes, others))(stream) {#api-splitNote}
 
 Separates the stream into two streams:
 
@@ -323,7 +321,7 @@ Usually, you would modify the notes stream, and merge it back with the others.
 For usage, see [[#usage-splitNote]].
 
 
-### 口.processNote(stream, callback(notes)) {#api-processNote}
+### 口.processNote(callback(notes))(stream) {#api-processNote}
 
 Just like `口.splitNote` but does not pass `others` to the callback
 and merges the `others` back automatically.

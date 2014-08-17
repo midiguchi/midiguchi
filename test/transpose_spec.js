@@ -33,7 +33,7 @@ describe('transpose', function() {
 
   it('should transpose notes, and ignore other events', function() {
     config(function(input, output) {
-      output.plug(transpose(input, 1))
+      output.plug(transpose(1)(input))
     }).in([0x90, 0x40, 0x50])
       .out([0x90, 0x41, 0x50])
       .in([0x70, 0x41, 0x50])
@@ -43,7 +43,7 @@ describe('transpose', function() {
   it('should release the right note after parameter has changed', function() {
     var transposition = new Bacon.Bus()
     config(function(input, output) {
-      output.plug(transpose(input, transposition.toProperty(3)))
+      output.plug(transpose(transposition.toProperty(3))(input))
     }).in([0x90, 0x40, 0x50])
       .out([0x90, 0x43, 0x50])
       .tap(function() { transposition.push(12) })
